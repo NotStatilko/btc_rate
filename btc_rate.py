@@ -11,7 +11,6 @@ from bs4 import BeautifulSoup
 
 halving_url = 'https://www.binance.vision/halving'
 difficulty_url = 'https://m.btc.com/stats/diff'
-bs4_halving = BeautifulSoup(urlopen(halving_url).read(),'html.parser')
 
 bs4_halving = BeautifulSoup(urlopen(halving_url).read(),'html.parser')
 bs4_difficulty = BeautifulSoup(urlopen(difficulty_url).read(),'html.parser')
