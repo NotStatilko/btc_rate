@@ -23,27 +23,23 @@ def get_fng_color(index: int):
 
 
 fng_link = 'https://api.alternative.me/fng/'
-halving_url = 'https://www.binance.vision/halving'
+halving_url = 'https://btc.com/'
 difficulty_url = 'https://m.btc.com/stats/diff'
 curr_price = 'https://api.coindesk.com/v1/bpi/currentprice/btc/.json'
 
 bs4_halving = BeautifulSoup(urlopen(halving_url).read(),'html.parser')
 bs4_difficulty = BeautifulSoup(urlopen(difficulty_url).read(),'html.parser')
 
-halving_timer = bs4_halving.find_all(class_='halvingTimer')[0].find_all(class_='time')
-days, hours, minutes, seconds = [int(i.text) for i in halving_timer]
+halving = bs4_halving.find_all(class_='unconfirmed-tx-item')[-4].getText().split('\n')[2].split('-')
+halving = '.'.join(reversed(halving))
 
-halving_timedelta = timedelta(days=days,hours=hours,minutes=minutes,seconds=seconds)
-halving = (datetime.now() + halving_timedelta).ctime().replace('  ',' ')[4:]
-
-to_replace = ((' ',''),('Days','d'),('Hours','h'),('\n',' '))
 diff_info = bs4_difficulty.find_all('dd')
 
 estimated_difficulty = diff_info[2].text.split('\n')[1].strip()
 estimated_difficulty = estimated_difficulty.replace('(','').replace(')','')
 
 estimated_time = diff_info[3].text
-for f,t in to_replace:
+for f,t in ((' ',''),('Days','d'),('Hours','h'),('\n',' ')):
     estimated_time = estimated_time.replace(f,t)
 
 font_rate = ImageFont.truetype('Anonymous.ttf',97)
@@ -62,7 +58,9 @@ rate = '$' + rate.split('.')[0]
 old_rate = urlopen('https://api.coindesk.com/v1/bpi/historical/close.json')
 old_rate_loads = loads(old_rate.read())['bpi']
 old_rate_fl = old_rate_loads[tuple(old_rate_loads.keys())[-1]] 
-old_rate_date = tuple(old_rate_loads.keys())[-1]
+
+old_rate_date = tuple(old_rate_loads.keys())[-1].split('-')
+old_rate_date = '.'.join(reversed(old_rate_date))
 
 fng_index = int(loads(urlopen(fng_link).read())['data'][0]['value'])
 fng_color = get_fng_color(fng_index)
@@ -94,12 +92,12 @@ old_rate_date_position = (
 halving_text_size = draw.textsize(halving,font=font_other)
 halving_position = (
     (1080 - halving_text_size[0] + 210) / 2, 
-    (1920 - halving_text_size[1] + 311) / 2
+    (1920 - halving_text_size[1] + 300) / 2
 )
 date_text_size = draw.textsize(date,font=font_other)
 date_position = (
-    (1080 - halving_text_size[0]) / 2, 
-    (1920 - halving_text_size[1] + 880) / 2
+    (1080 - halving_text_size[0]) / 2.75, 
+    (1920 - halving_text_size[1] + 875) / 2
 )
 est_diff_text_size = draw.textsize(
     estimated_difficulty,font=font_diff
