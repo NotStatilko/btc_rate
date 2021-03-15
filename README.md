@@ -1,8 +1,11 @@
-```
+## Install
+```bash
 git clone https://github.com/NotStatilko/btc_rate
 cd btc_rate
 pip3 install -r requirements.txt
-python btc_rate.py
 ```
-
-**After check** `btc_rate.png` **file**
+## Run
+```bash
+python3 btc_rate.py
+```
+<img src="https://raw.githubusercontent.com/NotStatilko/btc_rate/master/btc_rate.png" width="540" height="960"></img>
