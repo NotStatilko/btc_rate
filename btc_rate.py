@@ -1,7 +1,7 @@
 from PIL import Image, ImageFont, ImageDraw 
 
 from json import loads
-from datetime import datetime, timedelta
+from time import time, ctime
 
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
@@ -23,15 +23,13 @@ def get_fng_color(index: int):
 
 
 fng_link = 'https://api.alternative.me/fng/'
-halving_url = 'https://btc.com/'
 difficulty_url = 'https://m.btc.com/stats/diff'
 curr_price = 'https://api.coindesk.com/v1/bpi/currentprice/btc/.json'
 
-bs4_halving = BeautifulSoup(urlopen(halving_url).read(),'html.parser')
 bs4_difficulty = BeautifulSoup(urlopen(difficulty_url).read(),'html.parser')
 
-halving = bs4_halving.find_all(class_='unconfirmed-tx-item')[-4].getText().split('\n')[2].split('-')
-halving = '.'.join(reversed(halving))
+total_blocks = loads(urlopen('https://blockchain.info/latestblock').read())['height']
+halving = ctime(time() + (210000 - (total_blocks % 210000)) * 10 * 60).replace('  ',' ')[4:]
 
 diff_info = bs4_difficulty.find_all('dd')
 
@@ -72,7 +70,7 @@ per_change = per_symbol + str(
     round(100 - (sorted_rates[0] / sorted_rates[1] * 100),2)
 ) + '%'   
          
-date = datetime.now().ctime().replace('  ',' ')[4:]
+date = ctime().replace('  ',' ')[4:]
 
 rate_text_size = draw.textsize(rate,font=font_rate)
 rate_position = (
@@ -92,11 +90,11 @@ old_rate_date_position = (
 halving_text_size = draw.textsize(halving,font=font_other)
 halving_position = (
     (1080 - halving_text_size[0] + 210) / 2, 
-    (1920 - halving_text_size[1] + 300) / 2
+    (1920 - halving_text_size[1] + 307) / 2
 )
 date_text_size = draw.textsize(date,font=font_other)
 date_position = (
-    (1080 - halving_text_size[0]) / 2.75, 
+    (1080 - halving_text_size[0]) / 2.1,
     (1920 - halving_text_size[1] + 875) / 2
 )
 est_diff_text_size = draw.textsize(
